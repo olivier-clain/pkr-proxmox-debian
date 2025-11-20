@@ -1,0 +1,42 @@
+# Secret files and sensitive configuration
+.env
+*.env
+!.env.example
+
+# Tokens and credentials
+*.secret
+*.token
+credentials.json
+secrets.json
+
+# Packer cache and artifacts
+packer_cache/
+*.box
+crash.log
+*.qcow2
+*.vmdk
+*.vdi
+
+# Logs
+*.log
+packer-manifest.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Local variables
+*.auto.pkrvars.hcl
+!variables.auto.pkrvars.hcl.example

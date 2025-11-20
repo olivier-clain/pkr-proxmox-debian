@@ -1,0 +1,42 @@
+# EditorConfig pour Packer Proxmox Debian 12
+# https://editorconfig.org
+
+root = true
+
+# Configuration par défaut pour tous les fichiers
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Fichiers Packer (HCL)
+[*.{hcl,pkr.hcl}]
+indent_size = 2
+
+# Scripts Shell
+[*.sh]
+indent_size = 2
+
+# Fichiers Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# Fichiers de configuration
+[*.{cfg,conf,ini}]
+indent_size = 4
+
+# Makefile (doit utiliser des tabs)
+[Makefile]
+indent_style = tab
+
+# Fichiers YAML (si ajouté plus tard)
+[*.{yml,yaml}]
+indent_size = 2
+
+# Fichiers de variables d'environnement
+[.env*]
+indent_size = 2
