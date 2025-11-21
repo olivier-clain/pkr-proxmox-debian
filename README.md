@@ -58,13 +58,28 @@ wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.2.0-amd
 
 ## 🚀 Usage
 
-### Build the Template
+### Quick Start (Single Hypervisor)
 
 ```bash
 # Load environment variables
 source .env
 
 # Initialize Packer (first time only)
+make init
+
+# Build the template
+make build
+```
+
+The template will be created in Proxmox with ID 9988 (configurable) and name `debian-13-template-YYYYMMDD`.
+
+### Alternative: Using Packer Directly
+
+```bash
+# Load environment variables
+source .env
+
+# Initialize Packer
 packer init .
 
 # Validate the configuration
@@ -74,9 +89,37 @@ packer validate .
 packer build .
 ```
 
-### Result
+### Multi-Hypervisor Mode (Advanced)
 
-The template will be created in Proxmox with ID 9012 (configurable) and name `debian-13-template-YYYYMMDD`.
+Build templates on 3 Proxmox hypervisors simultaneously:
+
+```bash
+# Build on all 3 hypervisors in parallel
+make build-multi
+
+# Or build on specific hypervisor only
+make build-hv1  # 10.0.0.240
+make build-hv2  # 10.0.0.235
+make build-hv3  # 10.0.0.245
+```
+
+**📖 See [MULTI-HYPERVISOR.md](MULTI-HYPERVISOR.md) for detailed multi-hypervisor documentation.**
+
+### Using the Makefile
+
+```bash
+# Show all available commands
+make help
+
+# Complete workflow (init + validate + build)
+make all
+
+# Build with debug logs
+make build-debug
+
+# Validate configuration only
+make validate
+```
 
 ## 🎛️ Customization
 
@@ -137,23 +180,36 @@ Edit `scripts/02-install-packages.sh` and add your packages to the `PACKAGES` ar
 ├── .env.example                # Configuration template (copy to .env)
 ├── .gitignore                  # Exclude sensitive files
 ├── LICENSE                     # MIT License
-├── Makefile                    # Command automation
+├── Makefile                    # Command automation (15+ commands)
+├── README.md                   # This documentation
+├── README.fr.md                # French documentation
+├── MULTI-HYPERVISOR.md         # Multi-hypervisor build guide
+├── CHANGELOG.md                # Version history
+├── CONTRIBUTING.md             # Contribution guidelines
+├── PROJECT_SUMMARY.md          # Project overview
 ├── packer.pkr.hcl              # Packer configuration (plugins, locals)
-├── debian-13.pkr.hcl           # Debian 13 source and build configuration
+├── debian-13.pkr.hcl           # Debian 13 single build configuration
 ├── variables.pkr.hcl           # Variable definitions
 ├── variables.auto.pkrvars.hcl  # Default variable values
-├── README.md                   # This documentation
 ├── files/
 │   └── 99-pve.cfg              # Cloud-Init configuration for Proxmox
 ├── http/
 │   └── preseed.cfg             # Debian installation configuration
-└── scripts/
-    ├── README.md               # Scripts documentation
-    ├── 01-update-system.sh     # System update
-    ├── 02-install-packages.sh  # Package installation
-    ├── 03-configure-ssh.sh     # Secure SSH configuration
-    ├── 04-configure-cloud-init.sh  # Cloud-Init configuration
-    └── 99-cleanup.sh           # Final template cleanup
+├── scripts/
+│   ├── README.md               # Scripts documentation
+│   ├── 01-update-system.sh     # System update
+│   ├── 02-install-packages.sh  # Package installation
+│   ├── 03-configure-ssh.sh     # Secure SSH configuration
+│   ├── 04-configure-cloud-init.sh  # Cloud-Init configuration
+│   └── 99-cleanup.sh           # Final template cleanup
+└── multi/                      # Multi-hypervisor configuration
+    ├── debian-13-multi.pkr.hcl # Multi-hypervisor build (3 sources)
+    ├── variables-multi.pkr.hcl # Multi-hypervisor variables
+    ├── packer.pkr.hcl          # Packer config (symlink)
+    ├── variables.pkr.hcl       # Variables (symlink)
+    ├── scripts/ -> ../scripts  # Scripts symlink
+    ├── files/ -> ../files      # Files symlink
+    └── http/ -> ../http        # HTTP symlink
 ```
 
 ## ⚠️ Security

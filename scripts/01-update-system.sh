@@ -1,21 +1,21 @@
 #!/bin/bash
-# Script 01: Mise à jour du système
-# Description: Met à jour tous les paquets du système
+# Script 01: System Update
+# Description: Updates all system packages
 
 set -euo pipefail
 
-echo "==> Mise à jour du système Debian..."
+echo "==> Updating Debian system..."
 
-# Mise à jour de la liste des paquets
-echo "==> Mise à jour de la liste des paquets..."
+# Update package list
+echo "==> Updating package list..."
 apt-get update
 
-# Mise à jour des paquets installés
-echo "==> Mise à niveau des paquets..."
+# Update installed packages
+echo "==> Upgrading packages..."
 DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
-# Mise à niveau complète si nécessaire
-echo "==> Mise à niveau complète..."
+# Full upgrade if necessary
+echo "==> Full system upgrade..."
 DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
 
-echo "==> Système mis à jour avec succès"
+echo "==> System updated successfully"

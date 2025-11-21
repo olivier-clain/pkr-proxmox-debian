@@ -58,13 +58,28 @@ wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.2.0-amd
 
 ## 🚀 Utilisation
 
-### Build du template
+### Démarrage Rapide (Hyperviseur Unique)
 
 ```bash
 # Charger les variables d'environnement
 source .env
 
 # Initialiser Packer (première fois uniquement)
+make init
+
+# Builder le template
+make build
+```
+
+Le template sera créé dans Proxmox avec l'ID 9988 (configurable) et le nom `debian-13-template-YYYYMMDD`.
+
+### Alternative : Utilisation Directe de Packer
+
+```bash
+# Charger les variables d'environnement
+source .env
+
+# Initialiser Packer
 packer init .
 
 # Valider la configuration
@@ -74,9 +89,37 @@ packer validate .
 packer build .
 ```
 
-### Résultat
+### Mode Multi-Hyperviseur (Avancé)
 
-Le template sera créé dans Proxmox avec l'ID 9012 (configurable) et le nom `debian-13-template-YYYYMMDD`.
+Builder des templates sur 3 hyperviseurs Proxmox simultanément :
+
+```bash
+# Build sur les 3 hyperviseurs en parallèle
+make build-multi
+
+# Ou build sur un hyperviseur spécifique
+make build-hv1  # 10.0.0.240
+make build-hv2  # 10.0.0.235
+make build-hv3  # 10.0.0.245
+```
+
+**📖 Voir [MULTI-HYPERVISOR.md](MULTI-HYPERVISOR.md) pour la documentation détaillée du mode multi-hyperviseur.**
+
+### Utilisation du Makefile
+
+```bash
+# Afficher toutes les commandes disponibles
+make help
+
+# Workflow complet (init + validate + build)
+make all
+
+# Build avec logs de debug
+make build-debug
+
+# Valider la configuration uniquement
+make validate
+```
 
 ## 🎛️ Personnalisation
 
@@ -137,23 +180,36 @@ export PKR_VAR_ssh_password="MonMotDePasseSecurise"
 ├── .env.example                # Template de configuration (à copier en .env)
 ├── .gitignore                  # Exclusion des fichiers sensibles
 ├── LICENSE                     # Licence MIT
-├── Makefile                    # Automatisation des commandes
+├── Makefile                    # Automatisation des commandes (15+ commandes)
+├── README.md                   # Documentation en anglais
+├── README.fr.md                # Cette documentation (français)
+├── MULTI-HYPERVISOR.md         # Guide du mode multi-hyperviseur
+├── CHANGELOG.md                # Historique des versions
+├── CONTRIBUTING.md             # Guide de contribution
+├── PROJECT_SUMMARY.md          # Résumé du projet
 ├── packer.pkr.hcl              # Configuration Packer (plugins, locals)
-├── debian-13.pkr.hcl           # Configuration source et build Debian 13
+├── debian-13.pkr.hcl           # Configuration build hyperviseur unique
 ├── variables.pkr.hcl           # Définition des variables
 ├── variables.auto.pkrvars.hcl  # Valeurs par défaut des variables
-├── README.md                   # Cette documentation
 ├── files/
 │   └── 99-pve.cfg              # Configuration Cloud-Init pour Proxmox
 ├── http/
 │   └── preseed.cfg             # Configuration d'installation Debian
-└── scripts/
-    ├── README.md               # Documentation des scripts
-    ├── 01-update-system.sh     # Mise à jour du système
-    ├── 02-install-packages.sh  # Installation des paquets
-    ├── 03-configure-ssh.sh     # Configuration SSH sécurisée
-    ├── 04-configure-cloud-init.sh  # Configuration Cloud-Init
-    └── 99-cleanup.sh           # Nettoyage final du template
+├── scripts/
+│   ├── README.md               # Documentation des scripts
+│   ├── 01-update-system.sh     # Mise à jour du système
+│   ├── 02-install-packages.sh  # Installation des paquets
+│   ├── 03-configure-ssh.sh     # Configuration SSH sécurisée
+│   ├── 04-configure-cloud-init.sh  # Configuration Cloud-Init
+│   └── 99-cleanup.sh           # Nettoyage final du template
+└── multi/                      # Configuration multi-hyperviseur
+    ├── debian-13-multi.pkr.hcl # Build multi-hyperviseur (3 sources)
+    ├── variables-multi.pkr.hcl # Variables multi-hyperviseur
+    ├── packer.pkr.hcl          # Config Packer (lien symbolique)
+    ├── variables.pkr.hcl       # Variables (lien symbolique)
+    ├── scripts/ -> ../scripts  # Lien symbolique vers scripts
+    ├── files/ -> ../files      # Lien symbolique vers files
+    └── http/ -> ../http        # Lien symbolique vers http
 ```
 
 ## ⚠️ Sécurité
