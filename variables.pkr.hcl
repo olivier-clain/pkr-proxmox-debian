@@ -144,3 +144,16 @@ variable "files_directory" {
   description = "Directory containing configuration files"
   default     = "./files"
 }
+
+# Additional Variables (used in .auto.pkrvars.hcl)
+variable "vm_name" {
+  type        = string
+  description = "VM name (optional, will be generated from template_name if not set)"
+  default     = null
+}
+
+variable "iso_checksum" {
+  type        = string
+  description = "ISO checksum (use 'none' for no verification)"
+  default     = "none"
+}

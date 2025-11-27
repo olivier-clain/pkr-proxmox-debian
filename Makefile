@@ -44,38 +44,38 @@ check: check-env fmt validate ## Check everything (format + validation)
 build: check-env validate ## Build template on single hypervisor (default mode)
 	@echo "$(GREEN)Starting build on single hypervisor...$(NC)"
 	@echo "$(YELLOW)This may take 10-20 minutes...$(NC)"
-	@. ./$(ENV_FILE) && $(PACKER) build debian-13.pkr.hcl
+	@bash -c 'source .env && packer build .'
 	@echo "$(GREEN)✓ Build completed successfully$(NC)"
 
 build-multi: check-env validate ## Build template on all 3 hypervisors in parallel
 	@echo "$(GREEN)Starting parallel build on 3 hypervisors...$(NC)"
 	@echo "$(CYAN)Hypervisors: 10.0.0.240, 10.0.0.235, 10.0.0.245$(NC)"
 	@echo "$(YELLOW)This may take 10-20 minutes...$(NC)"
-	@cd multi && . ../.env && $(PACKER) build .
+	@bash -c 'cd multi && source ../.env && packer build .'
 	@echo "$(GREEN)✓ All templates created successfully$(NC)"
 
 build-hv1: check-env validate ## Build template on Hypervisor 1 only (10.0.0.240)
 	@echo "$(GREEN)Building on Hypervisor 1 (10.0.0.240)...$(NC)"
-	@cd multi && . ../.env && $(PACKER) build -only='proxmox-iso.debian-hv1' .
+	@bash -c 'cd multi && source ../.env && packer build -only="proxmox-iso.debian-hv1" .'
 	@echo "$(GREEN)✓ Template created on HV1$(NC)"
 
 build-hv2: check-env validate ## Build template on Hypervisor 2 only (10.0.0.235)
 	@echo "$(GREEN)Building on Hypervisor 2 (10.0.0.235)...$(NC)"
-	@cd multi && . ../.env && $(PACKER) build -only='proxmox-iso.debian-hv2' .
+	@bash -c 'cd multi && source ../.env && packer build -only="proxmox-iso.debian-hv2" .'
 	@echo "$(GREEN)✓ Template created on HV2$(NC)"
 
 build-hv3: check-env validate ## Build template on Hypervisor 3 only (10.0.0.245)
 	@echo "$(GREEN)Building on Hypervisor 3 (10.0.0.245)...$(NC)"
-	@cd multi && . ../.env && $(PACKER) build -only='proxmox-iso.debian-hv3' .
+	@bash -c 'cd multi && source ../.env && packer build -only="proxmox-iso.debian-hv3" .'
 	@echo "$(GREEN)✓ Template created on HV3$(NC)"
 
 build-force: check-env ## Build template without prior validation
 	@echo "$(YELLOW)Forced build (without validation)...$(NC)"
-	@. ./$(ENV_FILE) && $(PACKER) build -force .
+	@bash -c 'source .env && packer build -force .'
 
 build-debug: check-env ## Build with detailed logs for debugging
 	@echo "$(GREEN)Build in debug mode...$(NC)"
-	@. ./$(ENV_FILE) && PACKER_LOG=1 $(PACKER) build -debug .
+	@bash -c 'source .env && PACKER_LOG=1 packer build -debug .'
 
 clean: ## Clean temporary files and cache
 	@echo "$(GREEN)Cleaning...$(NC)"

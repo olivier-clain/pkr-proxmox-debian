@@ -24,10 +24,6 @@ cat > "${CLOUD_CFG_DIR}/90-custom.cfg" << 'EOF'
 # Désactiver la génération automatique de hostname
 preserve_hostname: false
 
-# Gestionnaire de réseau
-network:
-  config: disabled
-
 # Modules à exécuter
 cloud_init_modules:
   - migrator

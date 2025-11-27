@@ -7,8 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### In Progress
-- Ongoing tests and improvements
+### ✨ Added
+- **Static IP support for Terraform** - Cloud-Init network config disabled
+- New script `05-configure-network.sh` for network configuration
+- Complete Terraform documentation in `TERRAFORM-STATIC-IPS.md`
+- Terraform examples for static IP deployment
+- Network tools installation (ifupdown, iproute2, bridge-utils)
+- Documentation embedded in template at `/root/NETWORK-CONFIG-INFO.txt`
+
+### 🔧 Changed
+- Updated `files/99-pve.cfg` - added `network: config: disabled`
+- Updated `scripts/04-configure-cloud-init.sh` - removed network management
+- Updated README.md with Terraform static IP section
+- Updated `scripts/README.md` with new script documentation
+
+### 📝 Documentation
+- Added comprehensive guide `TERRAFORM-STATIC-IPS.md`
+- Multiple Terraform examples (simple VM, multi-IP, clusters, modules)
+- Troubleshooting section for network issues
+- Best practices for static IP configuration
 
 ---
 

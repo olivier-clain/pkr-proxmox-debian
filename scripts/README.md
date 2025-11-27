@@ -50,9 +50,24 @@ PACKAGES=(
 **Description**: Configures Cloud-Init for Proxmox
 - Installs Proxmox configuration (99-pve.cfg)
 - Configures Cloud-Init modules
+- **Network config disabled** for static IP support
 - Prepares template for automated deployment
 
 **When to modify**: To customize Cloud-Init behavior
+
+---
+
+### 05-configure-network.sh
+**Description**: Configures network for static IP support
+- Installs network tools (ifupdown, iproute2, bridge-utils)
+- Disables NetworkManager and systemd-networkd
+- Creates base network configuration
+- Prepares system for Proxmox/Terraform network management
+- Creates documentation in `/root/NETWORK-CONFIG-INFO.txt`
+
+**When to modify**: To adjust network configuration strategy
+
+**⚠️ Important**: This configuration allows Terraform to manage static IPs via Proxmox Cloud-Init
 
 ---
 

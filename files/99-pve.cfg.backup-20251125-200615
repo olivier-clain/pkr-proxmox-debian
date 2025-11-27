@@ -1,0 +1,11 @@
+# Cloud-Init configuration specific to Proxmox VE
+# File: files/99-pve.cfg
+
+# Datasource for Proxmox VE
+datasource_list: [NoCloud, ConfigDrive]
+
+# Disable automatic network configuration
+# This allows Proxmox/Terraform to manage network configuration
+# including static IPs via Proxmox API
+network:
+  config: disabled

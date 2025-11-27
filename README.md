@@ -1,6 +1,6 @@
 # Packer Template Proxmox Debian 13
 
-> 🇫🇷 [Version française](README.fr.md) | 🇬🇧 English version
+> 🇫🇷 [Version française](README.fr.md) | 🇬🇧 English version | 🚀 [Quick Start](QUICKSTART.md)
 
 Automated Packer template to create Debian 13 images on Proxmox VE with:
 - Default user: `user` / (configurable password)
@@ -8,6 +8,9 @@ Automated Packer template to create Debian 13 images on Proxmox VE with:
 - Automated installation via preseed
 - UEFI support
 - Optimized configuration for Proxmox
+- **✨ Static IP support for Terraform/Cloud-Init** (see [TERRAFORM-STATIC-IPS.md](TERRAFORM-STATIC-IPS.md))
+
+> **🚀 New to this project?** Start with [QUICKSTART.md](QUICKSTART.md) for a step-by-step guide!
 
 ## 📋 Prerequisites
 
@@ -121,6 +124,72 @@ make build-debug
 make validate
 ```
 
+## 🌐 Using with Terraform and Static IPs
+
+This template is **configured to support static IP addresses** via Terraform or the Proxmox API. Cloud-Init network management is disabled to allow Proxmox to control network configuration.
+
+### Terraform Example
+
+```hcl
+resource "proxmox_vm_qemu" "debian_vm" {
+  name        = "debian-vm-01"
+  target_node = "pve"
+  clone       = "debian-13-template-20250124"  # Your template name
+  
+  # VM Configuration
+  cores   = 2
+  memory  = 2048
+  agent   = 1
+  
+  # Network with Static IP
+  ipconfig0 = "ip=192.168.1.100/24,gw=192.168.1.1"
+  
+  # DNS Configuration
+  nameserver   = "192.168.1.1"
+  searchdomain = "local"
+  
+  # Disk
+  disk {
+    size    = "20G"
+    type    = "scsi"
+    storage = "local-lvm"
+  }
+  
+  # Network Interface
+  network {
+    model  = "virtio"
+    bridge = "vmbr0"
+  }
+}
+```
+
+### Via Proxmox Web Interface
+
+1. Create a VM from the template
+2. Go to: **VM > Cloud-Init**
+3. Configure:
+   - **IP Address**: `192.168.1.100/24`
+   - **Gateway**: `192.168.1.1`
+   - **DNS Server**: `192.168.1.1`
+4. Click **Regenerate Image**
+5. Start the VM
+
+### Verification
+
+After VM startup:
+```bash
+# Check IP configuration
+ip addr show
+
+# Check default gateway
+ip route show
+
+# Test connectivity
+ping -c 4 8.8.8.8
+```
+
+**📖 For complete Terraform examples and advanced configurations, see [TERRAFORM-STATIC-IPS.md](TERRAFORM-STATIC-IPS.md)**
+
 ## 🎛️ Customization
 
 ### Main Variables
@@ -137,7 +206,7 @@ Edit `variables.pkr.hcl` to customize:
 ### Installation Customization
 
 - **`http/preseed.cfg`**: Debian configuration (packages, partitioning, users)
-- **`files/99-pve.cfg`**: Cloud-Init configuration
+- **`files/99-pve.cfg`**: Cloud-Init configuration (network disabled for static IPs)
 - **`scripts/`**: Modular provisioning scripts (see `scripts/README.md`)
   - Modify existing scripts to customize installation
   - Add new scripts as needed
@@ -192,7 +261,7 @@ Edit `scripts/02-install-packages.sh` and add your packages to the `PACKAGES` ar
 ├── variables.pkr.hcl           # Variable definitions
 ├── variables.auto.pkrvars.hcl  # Default variable values
 ├── files/
-│   └── 99-pve.cfg              # Cloud-Init configuration for Proxmox
+│   └── 99-pve.cfg              # Cloud-Init configuration (network disabled for static IPs)
 ├── http/
 │   └── preseed.cfg             # Debian installation configuration
 ├── scripts/
@@ -201,6 +270,7 @@ Edit `scripts/02-install-packages.sh` and add your packages to the `PACKAGES` ar
 │   ├── 02-install-packages.sh  # Package installation
 │   ├── 03-configure-ssh.sh     # Secure SSH configuration
 │   ├── 04-configure-cloud-init.sh  # Cloud-Init configuration
+│   ├── 05-configure-network.sh     # Network setup for static IPs
 │   └── 99-cleanup.sh           # Final template cleanup
 └── multi/                      # Multi-hypervisor configuration
     ├── debian-13-multi.pkr.hcl # Multi-hypervisor build (3 sources)
